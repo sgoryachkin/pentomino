@@ -10,28 +10,32 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.sego.pentasolution.model.Block;
 import org.sego.pentasolution.model.Figure;
 
 public class SolutionService {
 	
+	private static final Logger LOG = Logger.getLogger(SolutionService.class.toString());
+	
 	public static void clac(int x, int y, List<Figure> figures) {
 
-		List<List<Figure>> figuresAll = new ArrayList<>();
-		System.out.println("All Figures:");
-
-		for (Figure figure : figures) {
-			List<Figure> variants = new ArrayList<>(figure.getDescVariantsWithAllRotation(x, y));
-			figuresAll.add(variants);
-		}
+		List<List<Figure>> figuresAll = figures.stream().map(f -> new ArrayList<Figure>(f.getAllRotationsWithAllPositions(x, y)))
+				.sorted(Collections.reverseOrder(Comparator.comparingInt(v -> v.size())))
+				.collect(Collectors.toUnmodifiableList());
+		LOG.info("Board: x=" + x + ", y=" + y);
+		LOG.info("All Figures:");
+		LOG.info(() -> {
+			StringBuilder sb = new StringBuilder();
+			for (List<Figure> f : figuresAll) {
+				sb.append(f.size()).append(", ");
+			}
+			return sb.toString();
+		});
 		
-		figuresAll.sort(Collections.reverseOrder(Comparator.comparingInt(v -> v.size())));
-		
-		for (List<Figure> f : figuresAll) {
-			System.out.println(f.size());
 
-		}
 
 		final BigInteger mc = figuresAll.stream().map(l -> BigInteger.valueOf(l.size())).reduce(BigInteger.ONE, (v1, v2) -> v1.multiply(v2));
 		System.out.println(mc);
@@ -40,7 +44,6 @@ public class SolutionService {
 		for (BigInteger j = BigInteger.ZERO; j.compareTo(mc) < 0; j = j.add(BigInteger.ONE)) { // Номер текущей комбинации
 			BigInteger nc = mc; // Сдвиг разрядов
 			boolean isShift = false;
-//			System.out.print(j + " - ");
 			for (int variantIndex = figuresAll.size() - 1; variantIndex >= 0; variantIndex--) { // Бежим по множествам
 				nc = nc.divide(BigInteger.valueOf(figuresAll.get(variantIndex).size())); // Двигаем разряд влево дальше
 				BigInteger shifted = floorDiv(j, nc); // Номер комбинации,

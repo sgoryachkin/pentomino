@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -69,7 +68,7 @@ public class Figure {
 		return new Builder();
 	}
 
-	public Set<Figure> getAllVariants() {
+	public Set<Figure> getAllRotations() {
 		Figure.Builder swapBuilder = Figure.builder();
 		Figure.Builder origYReversBuilder = Figure.builder();
 		Figure.Builder origXReverBuilder = Figure.builder();
@@ -104,7 +103,7 @@ public class Figure {
 				swapYReversBuilder.build(), swapXYReversBuilder.build()).collect(Collectors.toSet()));
 	}
 	
-	public Set<Figure> getDescVariants(int xsize, int ysize){
+	public Set<Figure> getAllPositions(int xsize, int ysize){
 		Set<Figure> result = new HashSet<Figure>();
 		for (int i = 0; i < xsize; i++) {
 			for (int j = 0; j < ysize; j++) {
@@ -125,8 +124,8 @@ public class Figure {
 		return result;
 	}
 	
-	public Set<Figure> getDescVariantsWithAllRotation(int xsize, int ysize){
-		return this.getAllVariants().stream().flatMap(f -> f.getDescVariants(xsize, ysize).stream()).collect(Collectors.toSet());
+	public Set<Figure> getAllRotationsWithAllPositions(int xsize, int ysize){
+		return this.getAllRotations().stream().flatMap(f -> f.getAllPositions(xsize, ysize).stream()).collect(Collectors.toSet());
 	}
 
 	public static class Builder {

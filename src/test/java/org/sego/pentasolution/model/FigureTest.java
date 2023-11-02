@@ -34,14 +34,14 @@ public class FigureTest {
 		System.out.println(Figure.X.toString());
 		Figure.X.drow();
 		System.out.println("Variants:");
-		for (Figure f : Figure.X.getAllVariants()) {
+		for (Figure f : Figure.X.getAllRotations()) {
 			f.drow();
 		}
 
 		System.out.println(Figure.L.toString());
 		Figure.L.drow();
 		System.out.println("Variants:");
-		for (Figure f : Figure.L.getAllVariants()) {
+		for (Figure f : Figure.L.getAllRotations()) {
 			f.drow();
 		}
 
@@ -52,7 +52,7 @@ public class FigureTest {
 		System.out.println(Figure.L.toString());
 		Figure.L.drow();
 		System.out.println("Variants:");
-		for (Figure f : Figure.L.getDescVariants(10, 6)) {
+		for (Figure f : Figure.L.getAllPositions(10, 6)) {
 			f.drow();
 		}
 	}

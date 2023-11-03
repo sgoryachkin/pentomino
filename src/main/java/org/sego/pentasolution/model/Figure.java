@@ -53,15 +53,19 @@ public class Figure {
 	
 	private static final char[] DROW_OPTIONS = {'0','Z','E','N','G','C','O','X','Y','D','A','B','K'};
 	
-	private Set<Block> blocks;
+	private Set<Integer> blocks;
 
-	public Set<Block> getBlocks() {
+	private Set<Block> getBlocks() {
+		return blocks.stream().map(v -> new Block(v)).collect(Collectors.toSet());
+	}
+	
+	public Set<Integer> getRowBlocks() {
 		return blocks;
 	}
 
 	public Figure(Set<Block> blocks) {
 		super();
-		this.blocks = Set.of(blocks.toArray(new Block[0]));
+		this.blocks = blocks.stream().map(b -> b.row()).collect(Collectors.toUnmodifiableSet());
 	}
 
 	public static Builder builder() {
@@ -77,6 +81,8 @@ public class Figure {
 		Figure.Builder swapYReversBuilder = Figure.builder();
 		Figure.Builder swapXYReversBuilder = Figure.builder();
 
+		Set<Block> blocks = getBlocks();
+		
 		for (Block b : blocks) {
 			swapBuilder.addBlock(new Block(b.y(), b.x()));
 		}
@@ -84,8 +90,9 @@ public class Figure {
 
 		var xmax = blocks.stream().map(b -> b.x()).max(Comparator.naturalOrder()).get();
 		var ymax = blocks.stream().map(b -> b.y()).max(Comparator.naturalOrder()).get();
-		var sxmax = swap.blocks.stream().map(b -> b.x()).max(Comparator.naturalOrder()).get();
-		var symax = swap.blocks.stream().map(b -> b.y()).max(Comparator.naturalOrder()).get();
+		Set<Block> swapblocks = swap.getBlocks();
+		var sxmax = swapblocks.stream().map(b -> b.x()).max(Comparator.naturalOrder()).get();
+		var symax = swapblocks.stream().map(b -> b.y()).max(Comparator.naturalOrder()).get();
 
 		for (Block b : blocks) {
 			origYReversBuilder.addBlock(new Block(b.x(), ymax - b.y()));
@@ -93,7 +100,7 @@ public class Figure {
 			origXYReversBuilder.addBlock(new Block(xmax - b.x(), ymax - b.y()));
 		}
 
-		for (Block b : swap.blocks) {
+		for (Block b : swapblocks) {
 			swapXReversBuilder.addBlock(new Block(b.x(), symax - b.y()));
 			swapYReversBuilder.addBlock(new Block(sxmax - b.x(), b.y()));
 			swapXYReversBuilder.addBlock(new Block(sxmax - b.x(), symax - b.y()));
@@ -108,14 +115,15 @@ public class Figure {
 		for (int i = 0; i < xsize; i++) {
 			for (int j = 0; j < ysize; j++) {
 				Set<Block> shiftBlocks = new HashSet<Block>();
-				for (Block b : blocks) {
+				for (Block b : getBlocks()) {
 					Block shiftBlock = new Block(b.x()+i, b.y()+j);
 					shiftBlocks.add(shiftBlock);
 				}
 				// validate
 				Figure f = new Figure(shiftBlocks);
-				var fxmax = f.blocks.stream().map(b -> b.x()).max(Comparator.naturalOrder()).get();
-				var fymax = f.blocks.stream().map(b -> b.y()).max(Comparator.naturalOrder()).get();
+				Set<Block> fblocks = f.getBlocks();
+				var fxmax = fblocks.stream().map(b -> b.x()).max(Comparator.naturalOrder()).get();
+				var fymax = fblocks.stream().map(b -> b.y()).max(Comparator.naturalOrder()).get();
 				if (fxmax<xsize && fymax < ysize) {
 					result.add(f);
 				}
@@ -148,7 +156,7 @@ public class Figure {
 	}
 
 	public void drow(char drowChar) {
-		drowBlocks(blocks, drowChar);
+		drowBlocks(getBlocks(), drowChar);
 	}
 	
 	public void drow() {

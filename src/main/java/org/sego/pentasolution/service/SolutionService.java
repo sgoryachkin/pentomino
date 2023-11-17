@@ -43,7 +43,7 @@ public class SolutionService {
 				(v1, v2) -> v1.multiply(v2));
 		System.out.println(mc);
 		// https://ru.stackoverflow.com/questions/235030/%d0%9a%d0%b0%d0%ba-%d1%81%d0%be%d1%81%d1%82%d0%b0%d0%b2%d0%b8%d1%82%d1%8c-%d0%b2%d0%be%d0%b7%d0%bc%d0%be%d0%b6%d0%bd%d1%8b%d0%b5-%d0%ba%d0%be%d0%bc%d0%b1%d0%b8%d0%bd%d0%b0%d1%86%d0%b8%d0%b8-%d0%bc%d0%b5%d0%b6%d0%b4%d1%83-%d1%8d%d0%bb%d0%b5%d0%bc%d0%b5%d0%bd%d1%82%d0%b0%d0%bc%d0%b8-%d0%bc%d0%bd%d0%be%d0%b6%d0%b5%d1%81%d1%82%d0%b2
-		BitSet goodSubCombinationBlocksBitSet = new BitSet(Block.MAX * Block.MAX);
+		BitSet goodSubCombinationBlocksBitSet = new BitSet();
 		int[] goodSubCombinationCode = new int[figuresAll.length]; // Current idx combination storage
 		//BigInteger nc; // Сдвиг разрядов
 		BigInteger ncs[] = new BigInteger[figuresAll.length]; // Shifts for all (cached)

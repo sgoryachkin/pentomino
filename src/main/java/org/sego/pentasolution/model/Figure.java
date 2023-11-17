@@ -1,6 +1,7 @@
 package org.sego.pentasolution.model;
 
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -53,19 +54,20 @@ public class Figure {
 	
 	private static final char[] DROW_OPTIONS = {'0','Z','E','N','G','C','O','X','Y','D','A','B','K'};
 	
-	private Set<Integer> blocks;
+	private int[] blocks;
 
 	private Set<Block> getBlocks() {
-		return blocks.stream().map(v -> new Block(v)).collect(Collectors.toSet());
+		return Arrays.stream(blocks).mapToObj(v -> new Block(v)).collect(Collectors.toSet());
 	}
 	
-	public Set<Integer> getRowBlocks() {
+	public int[] getRowBlocks() {
 		return blocks;
 	}
 
 	public Figure(Set<Block> blocks) {
 		super();
-		this.blocks = blocks.stream().map(b -> b.row()).collect(Collectors.toUnmodifiableSet());
+		this.blocks = blocks.stream().mapToInt(v-> v.row()).toArray();
+		Arrays.sort(this.blocks);
 	}
 
 	public static Builder builder() {
@@ -195,9 +197,14 @@ public class Figure {
 		}
 	}
 
+
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(blocks);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(blocks);
+		return result;
 	}
 
 	@Override
@@ -209,12 +216,12 @@ public class Figure {
 		if (getClass() != obj.getClass())
 			return false;
 		Figure other = (Figure) obj;
-		return Objects.equals(blocks, other.blocks);
+		return Arrays.equals(blocks, other.blocks);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("Figure [blocks=%s]", blocks);
+		return "Figure [blocks=" + Arrays.toString(blocks) + "]";
 	}
 	
 }

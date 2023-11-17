@@ -2,7 +2,7 @@ package org.sego.pentasolution.model;
 
 public class Block {
 
-	private static int SHIFT = 6;
+	private static int SHIFT = 4;
 	public static int MAX = (int) Math.pow(2, SHIFT);
 
 	private int v;

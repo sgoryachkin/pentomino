@@ -12,7 +12,7 @@ public class Block {
 		if (x >= MAX || y >= MAX) {
 			throw new IllegalArgumentException();
 		}
-		this.v = x << 6;
+		this.v = x << SHIFT;
 		this.v += y;
 	}
 	
@@ -22,7 +22,7 @@ public class Block {
 	}
 
 	int x() {
-		return v >> 6;
+		return v >> SHIFT;
 	}
 
 	int y() {

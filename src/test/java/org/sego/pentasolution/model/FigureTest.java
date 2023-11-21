@@ -2,8 +2,13 @@ package org.sego.pentasolution.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.jupiter.api.Test;
 import org.sego.pentasolution.service.SolutionService;
@@ -12,10 +17,17 @@ public class FigureTest {
 	
 	@Test
 	public void block() {
-		Block b = new Block(63, 63);
-		assertEquals(63, b.x());
-		assertEquals(63, b.y());
-		assertEquals(64*63+63, b.row());
+		Block b = new Block(12, 15);
+		assertEquals(12, b.x());
+		assertEquals(15, b.y());
+		
+		Block b2 = new Block(7, 0);
+		assertEquals(7, b2.x());
+		assertEquals(0, b2.y());
+		
+		Block b3 = new Block(0, 7);
+		assertEquals(0, b3.x());
+		assertEquals(7, b3.y());
 	}
 
 	@Test
@@ -30,7 +42,7 @@ public class FigureTest {
 	}
 	
 	@Test
-	public void clac6() {
+	public void clac6() throws InterruptedException, ExecutionException {
 		List<Figure> figures = List.of(Figure.L, Figure.V, Figure.N, Figure.U, Figure.X,Figure.I);
 		List<List<Figure>> solution = SolutionService.clac(6, 5, figures);
 		solution.stream().forEach(f -> {Figure.drowFigures(f); System.out.println();});
@@ -39,7 +51,7 @@ public class FigureTest {
 	}
 
 	@Test
-	public void clac8() {
+	public void clac8() throws InterruptedException, ExecutionException {
 		List<Figure> figures = List.of(Figure.L, Figure.Y, Figure.V, Figure.N, Figure.Z,Figure.P, Figure.W, Figure.X); // 8 - 33
 		List<List<Figure>> solution = SolutionService.clac(8, 5, figures);
 		solution.stream().forEach(f -> {Figure.drowFigures(f); System.out.println();});
@@ -47,13 +59,13 @@ public class FigureTest {
 	}
 	
 	@Test
-	public void clac9() {
+	public void clac9() throws InterruptedException, ExecutionException {
 		List<Figure> figures = List.of(Figure.L, Figure.P, Figure.U, Figure.F, Figure.Y,Figure.W, Figure.V, Figure.Z, Figure.N); // 9 - A
 		SolutionService.clac(9, 5, figures).stream().forEach(f -> {Figure.drowFigures(f); System.out.println();});
 	}
 	
 	@Test
-	public void clac10() {
+	public void clac10() throws InterruptedException, ExecutionException {
 		List<Figure> figures = List.of(Figure.L, Figure.P, Figure.U, Figure.F, Figure.Y,Figure.W, Figure.V, Figure.Z, Figure.N, Figure.I); 
 		SolutionService.clac(10, 5, figures).stream().forEach(f -> {Figure.drowFigures(f); System.out.println();});
 	}
@@ -76,44 +88,6 @@ public class FigureTest {
 			f.drow();
 		}
 
-	}
-	
-	@Test
-	public void arrayPerf() {
-		int[] array = new int[] {1,2,3,4};
-		Set<Integer> set = Set.of(1,2,3,4);
-		int arrayR = 0;
-		int setR = 0;
-		
-		long arrayStrt = System.currentTimeMillis();
-		for (int i = 0; i < 100000000; i++) {
-//			for (Integer integer : array) {
-//				arrayR+=integer;
-//			}
-			for (int integer = 0; integer<array.length ; integer++) {
-				arrayR+=array[integer];
-			}
-		}
-		
-		long setStart = System.currentTimeMillis();
-		for (int i = 0; i < 100000000; i++) {
-			for (Integer integer : set) {
-				setR+=integer;
-			}
-		}
-		
-		long end = System.currentTimeMillis();
-		assertEquals(arrayR, setR);
-		
-		System.out.println("Array: " + (setStart - arrayStrt));
-		System.out.println("Set  : " + (end - setStart));
-		
-		
-		
-		
-		
-		
-		
 	}
 
 	@Test

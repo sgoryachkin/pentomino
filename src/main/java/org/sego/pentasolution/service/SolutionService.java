@@ -24,7 +24,7 @@ public class SolutionService {
 
 	private static final Logger LOG = Logger.getLogger(SolutionService.class.toString());
 
-	private static final int threadCount = 40;
+	//private static final int threadCount = 4;
 
 	public static List<List<Figure>> clac(int x, int y, List<Figure> figures)
 			throws InterruptedException, ExecutionException {
@@ -59,22 +59,25 @@ public class SolutionService {
 		System.out.println(ccc.mc);
 		ccc.ncs = ncs(ccc.mc, ccc.figuresAll); // Shifts for all (cached)
 
-		List<CombinationContext> listcc = new ArrayList<CombinationContext>(threadCount);
-		for (int i = 0; i < threadCount; i++) {
+		final int taskCount = ccc.figuresAll[ccc.figuresAll.length - 1].length; //Task count assotiated with count of figures 
+		List<CombinationContext> listcc = new ArrayList<CombinationContext>(taskCount);
+		
+		for (int i = 0; i < taskCount; i++) {
 			CombinationContext cc = new CombinationContext(ccc);
 			cc.goodSubCombinationBlocksBitSet = new BitSet();
 			cc.goodSubCombinationCode = new int[cc.ccc.figuresAll.length]; // Current idx combination storage
 
 			cc.jump = BigInteger.ONE;
-			cc.startj = i == 0 ? BigInteger.ZERO : listcc.get(i - 1).endj.add(BigInteger.ONE);
-			cc.endj = i == (threadCount - 1) ? cc.ccc.mc
-					: cc.ccc.mc.divide(BigInteger.valueOf(threadCount)).multiply(BigInteger.valueOf(i + 1));
+			cc.startj = i == 0 ? BigInteger.ZERO 
+					: listcc.get(i - 1).endj.add(BigInteger.ONE);
+			cc.endj = (i == (taskCount - 1)) ? cc.ccc.mc
+					: cc.ccc.mc.divide(BigInteger.valueOf(taskCount)).multiply(BigInteger.valueOf(i + 1));
 
 			listcc.add(i, cc);
 			System.out.println(cc.startj + " - " + cc.endj);
 		}
 
-		ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+		ExecutorService executor = Executors.newFixedThreadPool(16);
 		List<Callable<List<List<Figure>>>> callables = listcc.stream()
 				.map(c -> (Callable<List<List<Figure>>>) () -> SolutionService.checkCombinationsInterval(c)).toList();
 		long prepareTime = System.currentTimeMillis();
@@ -113,12 +116,16 @@ public class SolutionService {
 
 			Figure[] figuresAllvariantIndex = cc.ccc.figuresAll[variantIndex];
 			BigInteger figuresAllvariantIndexlength = BigInteger.valueOf(figuresAllvariantIndex.length);
-
+			
 			int idx = j.divide(cc.ccc.ncs[variantIndex]).mod(figuresAllvariantIndexlength).intValue(); // Current shift
 
 			int[] idxBlocks = figuresAllvariantIndex[idx].getRowBlocks();
 
 //			System.out.print("nc=" + nc + " shifted=" + shifted + " > " + idx + " ");
+			if (BigInteger.valueOf(3185138507l).equals(j)) {
+				System.out.println(idx);
+				System.out.println(Arrays.toString(cc.goodSubCombinationCode));
+			}
 
 			if (!absentAll(cc.goodSubCombinationBlocksBitSet, idxBlocks)) {
 				cc.jump = cc.ccc.ncs[variantIndex];
@@ -147,7 +154,7 @@ public class SolutionService {
 //		System.out.println();
 		if (isShift) {
 			System.out.println(new BigDecimal(j).divide(new BigDecimal(cc.ccc.mc), 2, RoundingMode.FLOOR)
-					.multiply(BigDecimal.valueOf(100).round(new MathContext(1, RoundingMode.HALF_EVEN))) + "%");
+					.multiply(BigDecimal.valueOf(100).round(new MathContext(1, RoundingMode.HALF_EVEN))) + "% Interval " + cc.startj + " - " + cc.endj);
 		}
 	}
 

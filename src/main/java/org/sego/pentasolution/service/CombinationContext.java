@@ -1,22 +1,22 @@
 package org.sego.pentasolution.service;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
 import org.sego.pentasolution.model.Figure;
+import org.sego.pentasolution.util.Num;
 
 public class CombinationContext {
 	
 	
 	public static class CommonContext {
 		Figure[][] figuresAll;
-		BigInteger mc;
+		Num mc;
 		/**
 		 * Shifts of mc
 		 */
-		BigInteger ncs[];
+		Num ncs[];
 	}
 	
 	public CombinationContext(CommonContext ccc) {
@@ -27,9 +27,10 @@ public class CombinationContext {
 	CommonContext ccc;
 	
 	List<List<Figure>> solutions = new ArrayList<>();
-	BigInteger jump;
-	BigInteger startj;
-	BigInteger endj;
+	
+	Num jump;
+	Num startj;
+	Num endj;
 	
 	/**
 	 * Bit set to search solutios 

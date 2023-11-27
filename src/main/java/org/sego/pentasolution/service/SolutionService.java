@@ -19,6 +19,8 @@ import java.util.logging.Logger;
 
 import org.sego.pentasolution.model.Figure;
 import org.sego.pentasolution.service.CombinationContext.CommonContext;
+import org.sego.pentasolution.util.Num;
+import org.sego.pentasolution.util.NumLong;
 
 public class SolutionService {
 
@@ -54,30 +56,31 @@ public class SolutionService {
 			return sb.toString();
 		});
 
-		ccc.mc = Arrays.stream(ccc.figuresAll).map(l -> BigInteger.valueOf(l.length)).reduce(BigInteger.ONE,
-				(v1, v2) -> v1.multiply(v2));
+		ccc.mc = numFactory().setMutable(Arrays.stream(ccc.figuresAll).map(l -> BigInteger.valueOf(l.length)).reduce(BigInteger.ONE,
+				(v1, v2) -> v1.multiply(v2)));
 		System.out.println(ccc.mc);
 		ccc.ncs = ncs(ccc.mc, ccc.figuresAll); // Shifts for all (cached)
 
 		final int taskCount = ccc.figuresAll[ccc.figuresAll.length - 1].length; //Task count assotiated with count of figures 
 		List<CombinationContext> listcc = new ArrayList<CombinationContext>(taskCount);
-		
+	
 		for (int i = 0; i < taskCount; i++) {
 			CombinationContext cc = new CombinationContext(ccc);
 			cc.goodSubCombinationBlocksBitSet = new BitSet();
 			cc.goodSubCombinationCode = new int[cc.ccc.figuresAll.length]; // Current idx combination storage
 
-			cc.jump = BigInteger.ONE;
-			cc.startj = i == 0 ? BigInteger.ZERO 
-					: listcc.get(i - 1).endj.add(BigInteger.ONE);
+			cc.jump = numFactory().setMutable(1);
+			cc.startj = i == 0 ? numFactory().setMutable(0) 
+					: listcc.get(i - 1).endj.add(1);
 			cc.endj = (i == (taskCount - 1)) ? cc.ccc.mc
-					: cc.ccc.mc.divide(BigInteger.valueOf(taskCount)).multiply(BigInteger.valueOf(i + 1));
+					: cc.ccc.mc.divide(taskCount).multiply(i + 1);
 
 			listcc.add(i, cc);
 			System.out.println(cc.startj + " - " + cc.endj);
 		}
 
 		ExecutorService executor = Executors.newFixedThreadPool(16);
+		//ExecutorService executor = Executors.newSingleThreadExecutor();
 		List<Callable<List<List<Figure>>>> callables = listcc.stream()
 				.map(c -> (Callable<List<List<Figure>>>) () -> SolutionService.checkCombinationsInterval(c)).toList();
 		long prepareTime = System.currentTimeMillis();
@@ -96,7 +99,7 @@ public class SolutionService {
 	}
 
 	private static List<List<Figure>> checkCombinationsInterval(CombinationContext cc) {
-		for (BigInteger j = cc.startj; j.compareTo(cc.endj) < 0; j = j.add(cc.jump)) { // Combination number
+		for (Num j = cc.startj; j.compareTo(cc.endj) < 0; j.addMutable(cc.jump)) { // Combination number
 			checkCombination(j, cc);
 		}
 		return cc.solutions;
@@ -109,30 +112,23 @@ public class SolutionService {
 	 * @param j
 	 * @param cc
 	 */
-	private static void checkCombination(BigInteger j, CombinationContext cc) {
+	private static void checkCombination(Num j, CombinationContext cc) {
 		boolean isShift = false;
 		for (int variantIndex = cc.ccc.figuresAll.length - 1; variantIndex >= 0; variantIndex--) { // Бежим по
 																									// множествам
 
 			Figure[] figuresAllvariantIndex = cc.ccc.figuresAll[variantIndex];
-			BigInteger figuresAllvariantIndexlength = BigInteger.valueOf(figuresAllvariantIndex.length);
 			
-			int idx = j.divide(cc.ccc.ncs[variantIndex]).mod(figuresAllvariantIndexlength).intValue(); // Current shift
+			int idx = j.divide(cc.ccc.ncs[variantIndex]).mod(figuresAllvariantIndex.length); // Current shift
 
 			int[] idxBlocks = figuresAllvariantIndex[idx].getRowBlocks();
-
-//			System.out.print("nc=" + nc + " shifted=" + shifted + " > " + idx + " ");
-			if (BigInteger.valueOf(3185138507l).equals(j)) {
-				System.out.println(idx);
-				System.out.println(Arrays.toString(cc.goodSubCombinationCode));
-			}
 
 			if (!absentAll(cc.goodSubCombinationBlocksBitSet, idxBlocks)) {
 				cc.jump = cc.ccc.ncs[variantIndex];
 				isShift = (variantIndex == cc.ccc.figuresAll.length - 2);
 				break;
 			}
-			cc.jump = BigInteger.ONE;
+			cc.jump = numOneFactory();
 
 			addAll(cc.goodSubCombinationBlocksBitSet, idxBlocks);
 
@@ -147,24 +143,24 @@ public class SolutionService {
 				}
 				cc.solutions.add(Collections.unmodifiableList(listSolution));
 				LOG.info("Solution " + cc.solutions.size() + " was found on combination number: " + j);
+				Figure.drowFigures(listSolution); System.out.println();
 			}
 
 		}
 		cc.goodSubCombinationBlocksBitSet.clear();
 //		System.out.println();
 		if (isShift) {
-			System.out.println(new BigDecimal(j).divide(new BigDecimal(cc.ccc.mc), 2, RoundingMode.FLOOR)
+			System.out.println(new BigDecimal(j.getBigInteger()).divide(new BigDecimal(cc.ccc.mc.getBigInteger()), 2, RoundingMode.FLOOR)
 					.multiply(BigDecimal.valueOf(100).round(new MathContext(1, RoundingMode.HALF_EVEN))) + "% Interval " + cc.startj + " - " + cc.endj);
 		}
 	}
 
-	private static BigInteger[] ncs(BigInteger mc, Figure[][] figuresAll) {
-		BigInteger[] ncs = new BigInteger[figuresAll.length];
+	private static Num[] ncs(Num mc, Figure[][] figuresAll) {
+		Num[] ncs = new Num[figuresAll.length];
 		for (int variantIndex = figuresAll.length - 1; variantIndex >= 0; variantIndex--) { // Бежим по множествам
 			Figure[] figuresAllvariantIndex = figuresAll[variantIndex];
-			BigInteger figuresAllvariantIndexlength = BigInteger.valueOf(figuresAllvariantIndex.length);
-			ncs[variantIndex] = variantIndex == figuresAll.length - 1 ? mc.divide(figuresAllvariantIndexlength) // Current
-					: ncs[variantIndex + 1].divide(figuresAllvariantIndexlength); // Current
+			ncs[variantIndex] = variantIndex == figuresAll.length - 1 ? mc.divide(figuresAllvariantIndex.length) // Current
+					: ncs[variantIndex + 1].divide(figuresAllvariantIndex.length); // Current
 		}
 		return ncs;
 	}
@@ -182,6 +178,18 @@ public class SolutionService {
 		for (int i = 0; i < indexes.length; i++) {
 			bitSet.set(indexes[i]);
 		}
+	}
+	
+	// factory
+	
+	private static Num numFactory() {
+		return new NumLong();
+	}
+	
+	private static Num ONE = new NumLong(1); 
+	
+	private static Num numOneFactory() {
+		return ONE;
 	}
 
 }

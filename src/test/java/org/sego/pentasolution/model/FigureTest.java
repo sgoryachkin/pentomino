@@ -46,8 +46,8 @@ public class FigureTest {
 		List<Figure> figures = List.of(Figure.L, Figure.V, Figure.N, Figure.U, Figure.X,Figure.I);
 		List<List<Figure>> solution = SolutionService.clac(6, 5, figures);
 		solution.stream().forEach(f -> {Figure.drowFigures(f); System.out.println();});
+		System.out.println(solution.size());
 		assertEquals(8, solution.size());
-		
 	}
 
 	@Test
@@ -55,19 +55,35 @@ public class FigureTest {
 		List<Figure> figures = List.of(Figure.L, Figure.Y, Figure.V, Figure.N, Figure.Z,Figure.P, Figure.W, Figure.X); // 8 - 33
 		List<List<Figure>> solution = SolutionService.clac(8, 5, figures);
 		solution.stream().forEach(f -> {Figure.drowFigures(f); System.out.println();});
+		System.out.println(solution.size());
 		assertEquals(16, solution.size());
 	}
 	
 	@Test
 	public void clac9() throws InterruptedException, ExecutionException {
 		List<Figure> figures = List.of(Figure.L, Figure.P, Figure.U, Figure.F, Figure.Y,Figure.W, Figure.V, Figure.Z, Figure.N); // 9 - A
-		SolutionService.clac(9, 5, figures).stream().forEach(f -> {Figure.drowFigures(f); System.out.println();});
+		List<List<Figure>> solution = SolutionService.clac(9, 5, figures);
+		solution.stream().forEach(f -> {Figure.drowFigures(f); System.out.println();});
+		System.out.println(solution.size());
+		assertEquals(204, solution.size());//???
 	}
 	
 	@Test
 	public void clac10() throws InterruptedException, ExecutionException {
 		List<Figure> figures = List.of(Figure.L, Figure.P, Figure.U, Figure.F, Figure.Y,Figure.W, Figure.V, Figure.Z, Figure.N, Figure.I); 
-		SolutionService.clac(10, 5, figures).stream().forEach(f -> {Figure.drowFigures(f); System.out.println();});
+		List<List<Figure>> solution = SolutionService.clac(10, 5, figures);
+		solution.stream().forEach(f -> {Figure.drowFigures(f); System.out.println();});
+		System.out.println(solution.size());
+		assertEquals(16, solution.size());//???
+	}
+	
+	@Test
+	public void clac12() throws InterruptedException, ExecutionException {
+		List<Figure> figures = List.of(Figure.L, Figure.P, Figure.U, Figure.F, Figure.Y,Figure.W, Figure.V, Figure.Z, Figure.N, Figure.I, Figure.X, Figure.T); 
+		List<List<Figure>> solution = SolutionService.clac(12, 5, figures);
+		solution.stream().forEach(f -> {Figure.drowFigures(f); System.out.println();});
+		System.out.println(solution.size());
+		assertEquals(16, solution.size());//???
 	}
 	
 

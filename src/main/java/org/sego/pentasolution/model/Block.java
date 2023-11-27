@@ -3,13 +3,13 @@ package org.sego.pentasolution.model;
 public class Block {
 
 	private static int SHIFT = 4;
-	public static int MAX = (int) Math.pow(2, SHIFT);
+	public static int MAX = (1 << SHIFT) - 1; // 15
 
 	private int v;
 
 	public Block(int x, int y) {
 		super();
-		if (x >= MAX || y >= MAX) {
+		if (x > MAX || y > MAX) {
 			throw new IllegalArgumentException();
 		}
 		this.v = x << SHIFT;
@@ -26,7 +26,7 @@ public class Block {
 	}
 
 	int y() {
-		return v % MAX;
+		return v & MAX;
 	}
 	
 	int row() {

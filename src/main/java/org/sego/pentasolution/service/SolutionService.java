@@ -79,7 +79,8 @@ public class SolutionService {
 			System.out.println(cc.startj + " - " + cc.endj);
 		}
 
-		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+		//ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+		ExecutorService executor = Executors.newCachedThreadPool();
 		//ExecutorService executor = Executors.newSingleThreadExecutor();
 		List<Callable<List<List<Figure>>>> callables = listcc.stream()
 				.map(c -> (Callable<List<List<Figure>>>) () -> SolutionService.checkCombinationsInterval(c)).toList();

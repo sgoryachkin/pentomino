@@ -60,7 +60,7 @@ public class FigureTest {
 		List<List<Figure>> solution = SolutionService.clac(9, 5, figures);
 		solution.stream().forEach(f -> {Figure.drowFigures(f); System.out.println();});
 		System.out.println(solution.size());
-		assertEquals(204, solution.size());//???
+		assertEquals(204, solution.size());
 	}
 	
 	@Test

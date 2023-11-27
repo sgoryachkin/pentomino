@@ -26,7 +26,7 @@ public class SolutionService {
 
 	private static final Logger LOG = Logger.getLogger(SolutionService.class.toString());
 
-	//private static final int threadCount = 4;
+	private static final int threadCount = 16;
 
 	public static List<List<Figure>> clac(int x, int y, List<Figure> figures)
 			throws InterruptedException, ExecutionException {
@@ -79,7 +79,7 @@ public class SolutionService {
 			System.out.println(cc.startj + " - " + cc.endj);
 		}
 
-		ExecutorService executor = Executors.newFixedThreadPool(16);
+		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 		//ExecutorService executor = Executors.newSingleThreadExecutor();
 		List<Callable<List<List<Figure>>>> callables = listcc.stream()
 				.map(c -> (Callable<List<List<Figure>>>) () -> SolutionService.checkCombinationsInterval(c)).toList();

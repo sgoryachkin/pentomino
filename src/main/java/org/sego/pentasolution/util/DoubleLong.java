@@ -47,6 +47,4 @@ public class DoubleLong {
 		return "DoubleLong [l0=" + l0 + ", l1=" + l1 + "]";
 	}
 	
-	
-	
 }

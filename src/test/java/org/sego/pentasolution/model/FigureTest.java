@@ -2,12 +2,7 @@ package org.sego.pentasolution.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.jupiter.api.Test;

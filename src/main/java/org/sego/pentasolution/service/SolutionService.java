@@ -80,7 +80,8 @@ public class SolutionService {
 		}
 
 		//ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-		ExecutorService executor = Executors.newCachedThreadPool();
+		ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+		//ExecutorService executor = Executors.newCachedThreadPool();
 		//ExecutorService executor = Executors.newSingleThreadExecutor();
 		List<Callable<List<List<Figure>>>> callables = listcc.stream()
 				.map(c -> (Callable<List<List<Figure>>>) () -> SolutionService.checkCombinationsInterval(c)).toList();

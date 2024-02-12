@@ -85,8 +85,10 @@ public class SolutionService {
 		//ExecutorService executor = Executors.newSingleThreadExecutor();
 		List<Callable<List<List<Figure>>>> callables = listcc.stream()
 				.map(c -> (Callable<List<List<Figure>>>) () -> SolutionService.checkCombinationsInterval(c)).toList();
-		long prepareTime = System.currentTimeMillis();
+		
 		List<List<Figure>> solutions = new ArrayList<>();
+		
+		long prepareTime = System.currentTimeMillis();
 		List<Future<List<List<Figure>>>> result = executor.invokeAll(callables);
 		for (Future<List<List<Figure>>> future : result) {
 			solutions.addAll(future.get());

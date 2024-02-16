@@ -80,9 +80,9 @@ public class SolutionService {
 		}
 
 		//ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-		ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+		//ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 		//ExecutorService executor = Executors.newCachedThreadPool();
-		//ExecutorService executor = Executors.newSingleThreadExecutor();
+		ExecutorService executor = Executors.newSingleThreadExecutor();
 		List<Callable<List<List<Figure>>>> callables = listcc.stream()
 				.map(c -> (Callable<List<List<Figure>>>) () -> SolutionService.checkCombinationsInterval(c)).toList();
 		
@@ -170,8 +170,8 @@ public class SolutionService {
 	}
 
 	private static boolean absentAll(BitSet bitSet, int[] indexes) {
-		for (int i = 0; i < indexes.length; i++) {
-			if (bitSet.get(indexes[i])) {
+		for (int i : indexes) {
+			if (bitSet.get(i)) {
 				return false;
 			}
 		}
@@ -179,8 +179,8 @@ public class SolutionService {
 	}
 
 	private static void addAll(BitSet bitSet, int[] indexes) {
-		for (int i = 0; i < indexes.length; i++) {
-			bitSet.set(indexes[i]);
+		for (int i : indexes) {
+			bitSet.set(i);
 		}
 	}
 	
